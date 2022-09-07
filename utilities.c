@@ -6,7 +6,7 @@
 /*   By: iel-moha <iel-moha@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/08/16 01:31:38 by iel-moha          #+#    #+#             */
-/*   Updated: 2022/08/16 04:16:01 by iel-moha         ###   ########.fr       */
+/*   Updated: 2022/08/19 05:12:39 by iel-moha         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -39,4 +39,33 @@ int	ft_atoi(const char *str)
 	else if (r >= 9223372036854775807 && o == 1)
 		return (-1);
 	return (o * r);
+}
+
+int	is_digit(char **av)
+{
+	int	i[2];
+
+	i[0] = 0;
+	while (av[++i[0]])
+	{
+		if (av[i[0]][0] == '\0')
+			return (0);
+		i[1] = 0;
+		while (av[i[0]][i[1]] == ' ')
+				i[1]++;
+		while (av[i[0]][i[1]])
+		{
+			if (av[i[0]][i[1]] == '-' || av[i[0]][i[1]] == '+')
+			{	
+				i[1]++;
+				if (av[i[0]][i[1]] == '-' || av[i[0]][i[1]] == '+')
+					return (0);
+			}
+			else if ((av[i[0]][i[1]] > 47 && av[i[0]][i[1]] < 58))
+				i[1]++;
+			else
+				return (0);
+		}
+	}
+	return (1);
 }

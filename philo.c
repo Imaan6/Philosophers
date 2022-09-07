@@ -6,28 +6,87 @@
 /*   By: iel-moha <iel-moha@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/08/16 00:26:44 by iel-moha          #+#    #+#             */
-/*   Updated: 2022/08/16 05:14:01 by iel-moha         ###   ########.fr       */
+/*   Updated: 2022/09/07 03:38:30 by iel-moha         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "philo.h"
 
-int main(int ac, char **av)
+void*	thread_body(t_vars var)
 {
-    if (ac == 5 || ac == 6)
-    {
-        t_vars  var;
+	pthread_mutex_lock(var.forks[var.i]);
+	printf(" %d has taken a fork \n" , var.i);
+	pthread_mutex_lock(var.forks[var.i + 1]);
+	printf(" %d has taken a fork \n" , var.i);
+	printf(" %d is eating \n" , var.i);
+	usleep(1000 * var.tab[2]);
+	printf("%d \n ehhh", var.tab[2]);
+	pthread_mutex_unlock(var.forks[var.i]);
+	pthread_mutex_unlock(var.forks[var.i + 1]);
+	return NULL;
+}
 
-        var.tab = malloc((ac) * sizeof(int));
-        var.i = 0;
-        while (var.i < ac-1)
+void	create_philo(t_vars var, pthread_t *thread)
+{
+		var.i = 0;
+		while(var.i < var.tab[0])
 		{
-			var.tab[var.i] = ft_atoi(av[var.i + 1]);
+			var.result = pthread_create(&thread[var.i], NULL, (void *)thread_body, &var);
 			var.i++;
+			if(var.result != 0)
+			{
+				printf("pthread_create failed.");
+				return ;
+			}
 		}
+		var.i = 0;
+		while(var.i < var.tab[0])
+		{
+			var.result = pthread_join(thread[var.i++], NULL);
+			if(var.result != 0)
+			{
+				printf("pthread_join failed.");
+				return ;
+			}
+		}	
+}
 
+void init_mystruct(t_vars var, char **av, int ac)
+{
+	var.i = 0;
+	while (var.i < ac-1)
+	{
+		var.tab[var.i] = ft_atoi(av[var.i + 1]);
+		var.i++;
+	}
+}
+
+void init_mutex(t_vars var)
+{
+	var.i = 0;
+	while(var.i < var.tab[0])
+	{
+		var.result = pthread_mutex_init(&var.forks[var.i], NULL);
+		if (var.result != 0)
+		{
+			printf("pthread_mutex_init failed.");
+			return ;
+		}
+	}
+}
+
+int	main(int ac, char **av)
+{
+    if ((ac == 5 || ac == 6) && is_digit(av) == 1)
+    {
+		t_vars	var;
+
+		var.tab = malloc((ac) * sizeof(int));
+		init_mystruct(var, av, ac);
 		if (var.tab[0] < 1)
-			return 0;
-		printf("%d \n IT WORKS", var.tab[0]);
+			return (0);
+		pthread_t thread[var.tab[0]];
+		var.forks = malloc(var.tab[0] * sizeof(int));
+		create_philo(var, thread);
 	}
 }
