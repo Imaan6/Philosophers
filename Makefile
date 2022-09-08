@@ -7,7 +7,7 @@ OBJSRC = $(SRC)
 all : $(NAME)
 
 $(NAME): $(OBJSRC)
-	$(CC) $(FLAGS)  $(OBJSRC) -o $(NAME)
+	$(CC) $(FLAGS) $(OBJSRC) -o $(NAME)
 
 clean:
 	rm -rf $(NAME)
