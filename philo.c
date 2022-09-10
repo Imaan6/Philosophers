@@ -6,7 +6,7 @@
 /*   By: iel-moha <iel-moha@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/08/16 00:26:44 by iel-moha          #+#    #+#             */
-/*   Updated: 2022/09/08 03:24:40 by iel-moha         ###   ########.fr       */
+/*   Updated: 2022/09/10 22:26:30 by iel-moha         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -28,6 +28,9 @@ void	*thread_body(t_vars *var)
 		usleep(1000 * var->tab[2]);
 		pthread_mutex_unlock(&var->forks[v]);
 		pthread_mutex_unlock(&var->forks[(v + 1) % var->tab[0]]);
+		var->tnow = gettime(*var) - var->tstart;
+		printf("%ld ms %d is sleeping \n" , var->tnow, v);
+		usleep(var->tab[3] * 1000);
 	}
 	return NULL;
 }
@@ -45,7 +48,7 @@ void	create_philo(t_vars var, pthread_t *thread)
 		{	
 			var.tstart = gettime(var);
 			var.result = pthread_create(&thread[var.i], NULL, (void *)thread_body, &var);
-			usleep(1);
+			usleep(100);
 			var.i++;
 			if(var.result != 0)
 			{
@@ -90,12 +93,27 @@ void	init_mutex(t_vars var)
 	}	
 }
 
+void	destroy_mutex(t_vars var)
+{
+	var.i = 0;
+	while(var.i < var.tab[0])
+	{
+		var.result = pthread_mutex_destroy(&var.forks[var.i]);
+		var.i++;
+		if (var.result != 0)
+		{
+			printf("pthread_mutex_destroy failed.");
+			return ;
+		}
+	}	
+}
+
 int	main(int ac, char **av)
 {
     if ((ac == 5 || ac == 6) && is_digit(av) == 1)
     {
 		t_vars	var;
-
+		
 		var.tab = malloc((ac) * sizeof(int));
 		init_mystruct(var, av, ac);
 		if (var.tab[0] < 1)
@@ -104,5 +122,6 @@ int	main(int ac, char **av)
 		var.forks = malloc(var.tab[0] * sizeof(int));
 		init_mutex(var);
 		create_philo(var, thread);
+		destroy_mutex(var);
 	}
 }

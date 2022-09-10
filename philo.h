@@ -6,7 +6,7 @@
 /*   By: iel-moha <iel-moha@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/08/16 00:26:56 by iel-moha          #+#    #+#             */
-/*   Updated: 2022/09/08 03:18:29 by iel-moha         ###   ########.fr       */
+/*   Updated: 2022/09/10 22:25:16 by iel-moha         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -38,5 +38,6 @@ void    init_mystruct(t_vars var, char **av, int ac);
 void    create_philo(t_vars var, pthread_t *thread);
 void*	thread_body(t_vars *var);
 long	gettime(t_vars var);
+void	destroy_mutex(t_vars var);
 
 #endif
