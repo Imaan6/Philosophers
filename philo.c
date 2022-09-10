@@ -6,7 +6,7 @@
 /*   By: iel-moha <iel-moha@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/08/16 00:26:44 by iel-moha          #+#    #+#             */
-/*   Updated: 2022/09/10 22:26:30 by iel-moha         ###   ########.fr       */
+/*   Updated: 2022/09/10 23:28:32 by iel-moha         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,20 +18,28 @@ void	*thread_body(t_vars *var)
 	v = var->i;
 	while(1)
 	{
-		pthread_mutex_lock(&var->forks[v]);
-		var->tnow = gettime(*var) - var->tstart;
-		printf("%ld ms %d has taken a fork \n" , var->tnow,v);
-		pthread_mutex_lock(&var->forks[(v + 1)  % var->tab[0]]);
-		var->tnow = gettime(*var) - var->tstart;
-		printf("%ld ms %d has taken a fork \n" , var->tnow, v);
-		printf("%ld ms %d is eating \n" , var->tnow, v);
-		usleep(1000 * var->tab[2]);
-		pthread_mutex_unlock(&var->forks[v]);
-		pthread_mutex_unlock(&var->forks[(v + 1) % var->tab[0]]);
-		var->tnow = gettime(*var) - var->tstart;
-		printf("%ld ms %d is sleeping \n" , var->tnow, v);
-		usleep(var->tab[3] * 1000);
+		//if(var->time_to_die >= var->tnow)
+		//{
+			pthread_mutex_lock(&var->forks[v]);
+			var->tnow = gettime(*var) - var->tstart;
+			printf("%ld ms %d has taken a fork \n" , var->tnow,v);
+			pthread_mutex_lock(&var->forks[(v + 1)  % var->tab[0]]);
+			var->tnow = gettime(*var) - var->tstart;
+			printf("%ld ms %d has taken a fork \n" , var->tnow, v);
+			printf("%ld ms %d is eating \n" , var->tnow, v);
+			usleep(1000 * var->tab[2]);
+			//var->time_to_die += var->tab[1];
+			pthread_mutex_unlock(&var->forks[v]);
+			pthread_mutex_unlock(&var->forks[(v + 1) % var->tab[0]]);
+			var->tnow = gettime(*var) - var->tstart;
+			printf("%ld ms %d is sleeping \n" , var->tnow, v);
+			usleep(var->tab[3] * 1000);
+		// }
+		// else
+		// 	break;
 	}
+	var->tnow = gettime(*var) - var->tstart;
+	printf("%ld ms %d died \n", var->tnow, v);
 	return NULL;
 }
 
@@ -76,6 +84,8 @@ void	init_mystruct(t_vars var, char **av, int ac)
 		var.tab[var.i] = ft_atoi(av[var.i + 1]);
 		var.i++;
 	}
+	var.time_to_die = var.tab[1];
+	var.tnow = 0;
 }
 
 void	init_mutex(t_vars var)

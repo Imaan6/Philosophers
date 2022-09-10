@@ -6,7 +6,7 @@
 /*   By: iel-moha <iel-moha@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/08/16 00:26:56 by iel-moha          #+#    #+#             */
-/*   Updated: 2022/09/10 22:25:16 by iel-moha         ###   ########.fr       */
+/*   Updated: 2022/09/10 22:35:33 by iel-moha         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -29,6 +29,7 @@ typedef struct vars
     long int    tstart;
     long int    tnow;
     struct timeval time;
+    int         time_to_die;
 }   t_vars;
 
 int     ft_atoi(const char *str);
