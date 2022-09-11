@@ -6,7 +6,7 @@
 /*   By: iel-moha <iel-moha@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/08/16 00:26:44 by iel-moha          #+#    #+#             */
-/*   Updated: 2022/09/10 23:28:32 by iel-moha         ###   ########.fr       */
+/*   Updated: 2022/09/11 18:20:37 by iel-moha         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,38 +15,50 @@
 void	*thread_body(t_vars *var)
 {	
 	int v;
+	int	time_to_die;
+	
 	v = var->i;
+	time_to_die = var->tab[1];
 	while(1)
 	{
-		//if(var->time_to_die >= var->tnow)
-		//{
-			pthread_mutex_lock(&var->forks[v]);
-			var->tnow = gettime(*var) - var->tstart;
-			printf("%ld ms %d has taken a fork \n" , var->tnow,v);
-			pthread_mutex_lock(&var->forks[(v + 1)  % var->tab[0]]);
-			var->tnow = gettime(*var) - var->tstart;
-			printf("%ld ms %d has taken a fork \n" , var->tnow, v);
-			printf("%ld ms %d is eating \n" , var->tnow, v);
-			usleep(1000 * var->tab[2]);
-			//var->time_to_die += var->tab[1];
-			pthread_mutex_unlock(&var->forks[v]);
-			pthread_mutex_unlock(&var->forks[(v + 1) % var->tab[0]]);
-			var->tnow = gettime(*var) - var->tstart;
-			printf("%ld ms %d is sleeping \n" , var->tnow, v);
-			usleep(var->tab[3] * 1000);
-		// }
-		// else
-		// 	break;
+		if(var->is_philo_dead == 0)
+		{
+			if(time_to_die >= var->tnow && var->is_philo_dead == 0)
+			{
+				pthread_mutex_lock(&var->forks[v % var->tab[0]]);
+				var->tnow = gettime(*var) - var->tstart;
+				printf("%ld ms %d has taken a fork \n" , var->tnow,v);
+				pthread_mutex_lock(&var->forks[(v + 1)  % var->tab[0]]);
+				var->tnow = gettime(*var) - var->tstart;
+				printf("%ld ms %d has taken a fork \n" , var->tnow, v);
+				printf("%ld ms %d is eating \n" , var->tnow, v);
+				usleep(1000 * var->tab[2]);
+				time_to_die += var->tab[1];
+				printf("TIME TO DIE FOR PHILOSOPHER NUMBER %d IS %d \n", v, time_to_die);
+				printf("IS PHILOSOPHER %d DEAD? %d \n", v, var->is_philo_dead);
+				pthread_mutex_unlock(&var->forks[v % var->tab[0]]);
+				pthread_mutex_unlock(&var->forks[(v + 1) % var->tab[0]]);
+				var->tnow = gettime(*var) - var->tstart;
+				printf("%ld ms %d is sleeping \n" , var->tnow, v);
+				usleep(var->tab[3] * 1000);
+			}
+			else
+			{
+				var->is_philo_dead = 1;
+				var->tnow = gettime(*var) - var->tstart;
+				printf("%ld ms %d died \n", var->tnow, v);
+				break;
+			}
+		}
+		break;
 	}
-	var->tnow = gettime(*var) - var->tstart;
-	printf("%ld ms %d died \n", var->tnow, v);
 	return NULL;
 }
 
 long	gettime(t_vars var)
 {
 	gettimeofday(&var.time, NULL);
-	return(var.time.tv_sec * 1000);
+	return( (var.time.tv_sec * 1000) + (var.time.tv_usec / 1000));
 }
 
 void	create_philo(t_vars var, pthread_t *thread)
@@ -84,38 +96,8 @@ void	init_mystruct(t_vars var, char **av, int ac)
 		var.tab[var.i] = ft_atoi(av[var.i + 1]);
 		var.i++;
 	}
-	var.time_to_die = var.tab[1];
 	var.tnow = 0;
-}
-
-void	init_mutex(t_vars var)
-{
-	var.i = 0;
-	while(var.i < var.tab[0])
-	{
-		var.result = pthread_mutex_init(&var.forks[var.i], NULL);
-		var.i++;
-		if (var.result != 0)
-		{
-			printf("pthread_mutex_init failed.");
-			return ;
-		}
-	}	
-}
-
-void	destroy_mutex(t_vars var)
-{
-	var.i = 0;
-	while(var.i < var.tab[0])
-	{
-		var.result = pthread_mutex_destroy(&var.forks[var.i]);
-		var.i++;
-		if (var.result != 0)
-		{
-			printf("pthread_mutex_destroy failed.");
-			return ;
-		}
-	}	
+	var.is_philo_dead = 0;
 }
 
 int	main(int ac, char **av)

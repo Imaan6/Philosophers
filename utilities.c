@@ -6,7 +6,7 @@
 /*   By: iel-moha <iel-moha@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/08/16 01:31:38 by iel-moha          #+#    #+#             */
-/*   Updated: 2022/08/19 05:12:39 by iel-moha         ###   ########.fr       */
+/*   Updated: 2022/09/11 17:50:23 by iel-moha         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -68,4 +68,34 @@ int	is_digit(char **av)
 		}
 	}
 	return (1);
+}
+
+void	init_mutex(t_vars var)
+{
+	var.i = 0;
+	while(var.i < var.tab[0])
+	{
+		var.result = pthread_mutex_init(&var.forks[var.i], NULL);
+		var.i++;
+		if (var.result != 0)
+		{
+			printf("pthread_mutex_init failed.");
+			return ;
+		}
+	}
+}
+
+void	destroy_mutex(t_vars var)
+{
+	var.i = 0;
+	while(var.i < var.tab[0])
+	{
+		var.result = pthread_mutex_destroy(&var.forks[var.i]);
+		var.i++;
+		if (var.result != 0)
+		{
+			printf("pthread_mutex_destroy failed.");
+			return ;
+		}
+	}	
 }

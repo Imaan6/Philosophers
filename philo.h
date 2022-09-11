@@ -6,7 +6,7 @@
 /*   By: iel-moha <iel-moha@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/08/16 00:26:56 by iel-moha          #+#    #+#             */
-/*   Updated: 2022/09/10 22:35:33 by iel-moha         ###   ########.fr       */
+/*   Updated: 2022/09/11 16:05:18 by iel-moha         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -21,15 +21,15 @@
 
 typedef struct vars
 {
-    int j;
-    int i;
-    int *tab;
+    int 			j;
+    int 			i;
+    int 			*tab;
     pthread_mutex_t *forks;
-    int result;
-    long int    tstart;
-    long int    tnow;
-    struct timeval time;
-    int         time_to_die;
+    int 			result;
+    long int    	tstart;
+    long int    	tnow;
+    struct timeval 	time;
+    int				is_philo_dead;
 }   t_vars;
 
 int     ft_atoi(const char *str);
