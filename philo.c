@@ -14,16 +14,16 @@
 
 void	*thread_body(t_vars *var)
 {	
-	int v;
+	int	v;
 	int	time_to_die;
 	
 	v = var->i;
 	time_to_die = var->tab[1];
-	while(1)
+	while (1)
 	{
-		if(var->is_philo_dead == 0)
+		if (var->is_philo_dead == 0)
 		{
-			if(time_to_die >= var->tnow && var->is_philo_dead == 0)
+			if (time_to_die >= var->tnow && var->is_philo_dead == 0)
 			{
 				pthread_mutex_lock(&var->forks[v % var->tab[0]]);
 				var->tnow = gettime(*var) - var->tstart;
