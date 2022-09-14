@@ -88,16 +88,16 @@ void	create_philo(t_vars var, pthread_t *thread)
 		}	
 }
 
-void	init_mystruct(t_vars var, char **av, int ac)
+void	init_mystruct(t_vars *var, char **av, int ac)
 {
-	var.i = 0;
-	while (var.i < ac-1)
+	var->i = 0;
+	while (var->i < ac-1)
 	{
-		var.tab[var.i] = ft_atoi(av[var.i + 1]);
-		var.i++;
+		var->tab[var->i] = ft_atoi(av[var->i + 1]);
+		var->i++;
 	}
-	var.tnow = 0;
-	var.is_philo_dead = 0;
+	var->tnow = 0;
+	var->is_philo_dead = 0;
 }
 
 int	main(int ac, char **av)
@@ -107,7 +107,7 @@ int	main(int ac, char **av)
 		t_vars	var;
 		
 		var.tab = malloc((ac) * sizeof(int));
-		init_mystruct(var, av, ac);
+		init_mystruct(&var, av, ac);
 		if (var.tab[0] < 1)
 			return (0);
 		pthread_t thread[var.tab[0]];
