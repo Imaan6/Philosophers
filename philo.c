@@ -44,7 +44,9 @@ void	*thread_body(t_vars *var)
 			}
 			else
 			{
+				//pthread_mutex_lock(&var->death);
 				var->is_philo_dead = 1;
+				//pthread_mutex_unlock(&var->death);
 				var->tnow = gettime(*var) - var->tstart;
 				printf("%ld ms %d died \n", var->tnow, v);
 				break;
@@ -112,7 +114,7 @@ int	main(int ac, char **av)
 			return (0);
 		pthread_t thread[var.tab[0]];
 		var.forks = malloc(var.tab[0] * sizeof(int));
-		init_mutex(var);
+		init_mutex(&var);
 		create_philo(var, thread);
 		destroy_mutex(var);
 	}

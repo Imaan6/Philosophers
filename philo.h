@@ -30,11 +30,12 @@ typedef struct vars
     long int    	tnow;
     struct timeval 	time;
     int				is_philo_dead;
+	pthread_mutex_t	death;
 }   t_vars;
 
 int     ft_atoi(const char *str);
 int     is_digit(char **av);
-void    init_mutex(t_vars var);
+void    init_mutex(t_vars *var);
 void    init_mystruct(t_vars *var, char **av, int ac);
 void    create_philo(t_vars var, pthread_t *thread);
 void*	thread_body(t_vars *var);

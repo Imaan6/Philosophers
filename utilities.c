@@ -70,14 +70,14 @@ int	is_digit(char **av)
 	return (1);
 }
 
-void	init_mutex(t_vars var)
+void	init_mutex(t_vars *var)
 {
-	var.i = 0;
-	while(var.i < var.tab[0])
+	var->i = 0;
+	while(var->i < var->tab[0])
 	{
-		var.result = pthread_mutex_init(&var.forks[var.i], NULL);
-		var.i++;
-		if (var.result != 0)
+		var->result = pthread_mutex_init(&var->forks[var->i], NULL);
+		var->i++;
+		if (var->result != 0)
 		{
 			printf("pthread_mutex_init failed.");
 			return ;
