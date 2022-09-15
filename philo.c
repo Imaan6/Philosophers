@@ -45,7 +45,7 @@ void	*thread_body(t_vars *var)
 			else
 			{
 				//pthread_mutex_lock(&var->death);
-				var->is_philo_dead = 1;
+				var->is_philo_dead = 1; 
 				//pthread_mutex_unlock(&var->death);
 				var->tnow = gettime(*var) - var->tstart;
 				printf("%ld ms %d died \n", var->tnow, v);
