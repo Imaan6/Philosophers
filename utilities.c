@@ -6,7 +6,7 @@
 /*   By: iel-moha <iel-moha@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/08/16 01:31:38 by iel-moha          #+#    #+#             */
-/*   Updated: 2022/09/11 17:50:23 by iel-moha         ###   ########.fr       */
+/*   Updated: 2022/09/16 23:56:46 by iel-moha         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -82,6 +82,18 @@ void	init_mutex(t_vars *var)
 			printf("pthread_mutex_init failed.");
 			return ;
 		}
+	}
+	var->result = pthread_mutex_init(&var->death, NULL);
+	if (var->result != 0)
+	{
+		printf("pthread_mutex_init failed.");
+		return ;
+	}
+	var->result = pthread_mutex_init(&var->print, NULL);
+	if (var->result != 0)
+	{
+		printf("pthread_mutex_init failed.");
+		return ;
 	}
 }
 

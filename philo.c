@@ -6,7 +6,7 @@
 /*   By: iel-moha <iel-moha@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/08/16 00:26:44 by iel-moha          #+#    #+#             */
-/*   Updated: 2022/09/11 18:20:37 by iel-moha         ###   ########.fr       */
+/*   Updated: 2022/09/16 23:57:25 by iel-moha         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -34,8 +34,8 @@ void	*thread_body(t_vars *var)
 				printf("%ld ms %d is eating \n" , var->tnow, v);
 				usleep(1000 * var->tab[2]);
 				time_to_die += var->tab[1];
-				printf("TIME TO DIE FOR PHILOSOPHER NUMBER %d IS %d \n", v, time_to_die);
-				printf("IS PHILOSOPHER %d DEAD? %d \n", v, var->is_philo_dead);
+				//printf("TIME TO DIE FOR PHILOSOPHER NUMBER %d IS %d \n", v, time_to_die);
+				//printf("IS PHILOSOPHER %d DEAD? %d \n", v, var->is_philo_dead);
 				pthread_mutex_unlock(&var->forks[v % var->tab[0]]);
 				pthread_mutex_unlock(&var->forks[(v + 1) % var->tab[0]]);
 				var->tnow = gettime(*var) - var->tstart;
@@ -44,9 +44,9 @@ void	*thread_body(t_vars *var)
 			}
 			else
 			{
-				//pthread_mutex_lock(&var->death);
+				pthread_mutex_lock(&var->death);
 				var->is_philo_dead = 1; 
-				//pthread_mutex_unlock(&var->death);
+				pthread_mutex_unlock(&var->death);
 				var->tnow = gettime(*var) - var->tstart;
 				printf("%ld ms %d died \n", var->tnow, v);
 				break;

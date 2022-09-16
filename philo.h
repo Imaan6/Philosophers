@@ -6,7 +6,7 @@
 /*   By: iel-moha <iel-moha@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/08/16 00:26:56 by iel-moha          #+#    #+#             */
-/*   Updated: 2022/09/11 16:05:18 by iel-moha         ###   ########.fr       */
+/*   Updated: 2022/09/16 23:55:23 by iel-moha         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -31,6 +31,7 @@ typedef struct vars
     struct timeval 	time;
     int				is_philo_dead;
 	pthread_mutex_t	death;
+    pthread_mutex_t print;
 }   t_vars;
 
 int     ft_atoi(const char *str);
