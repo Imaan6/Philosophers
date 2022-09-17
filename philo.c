@@ -6,7 +6,7 @@
 /*   By: iel-moha <iel-moha@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/08/16 00:26:44 by iel-moha          #+#    #+#             */
-/*   Updated: 2022/09/17 16:29:05 by iel-moha         ###   ########.fr       */
+/*   Updated: 2022/09/17 17:11:42 by iel-moha         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -73,7 +73,7 @@ void	*thread_body(t_philo *philo)
 void	super_visor(t_philo *philos, t_vars *var)
 {
 	int i = 0;
-	int meal_count = 0;
+	//int meal_count = 0;
 	while(i < var->tab[0])
 	{
 		pthread_mutex_lock(&philos[i].vars->death);
