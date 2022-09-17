@@ -6,99 +6,121 @@
 /*   By: iel-moha <iel-moha@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/08/16 00:26:44 by iel-moha          #+#    #+#             */
-/*   Updated: 2022/09/16 23:57:25 by iel-moha         ###   ########.fr       */
+/*   Updated: 2022/09/17 16:29:05 by iel-moha         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "philo.h"
 
-void	*thread_body(t_vars *var)
+
+long gettimenow()
+{
+	struct timeval t;
+	gettimeofday(&t, NULL);
+	return ((t.tv_sec * 1000) + (t.tv_usec / 1000));
+	
+}
+
+void myusleep(long long time_to_waste)
+{	
+	long long time_finish = gettimenow() + time_to_waste;
+	while(gettimenow() < time_finish)
+	{
+		usleep(10);
+	}
+}
+
+void	mutex_print(int v, t_vars *var, char *text)
+{
+	
+	pthread_mutex_lock(&var->print);
+	if(var->is_philo_dead != 1)
+		printf("%ld %d %s \n", gettimenow() - var->tstart, v, text);
+	pthread_mutex_unlock(&var->print);
+}
+
+void	*thread_body(t_philo *philo)
 {	
 	int	v;
-	int	time_to_die;
 	
-	v = var->i;
-	time_to_die = var->tab[1];
+	philo->time_to_die = philo->vars->tab[1] + gettimenow();
+	// printf("time to day : %lu")
+	pthread_mutex_lock(&philo->vars->death);
+	philo->time_to_die = philo->vars->tab[1] + gettimenow();
+	pthread_mutex_unlock(&philo->vars->death);
+	v = philo->i;
 	while (1)
 	{
-		if (var->is_philo_dead == 0)
-		{
-			if (time_to_die >= var->tnow && var->is_philo_dead == 0)
-			{
-				pthread_mutex_lock(&var->forks[v % var->tab[0]]);
-				var->tnow = gettime(*var) - var->tstart;
-				printf("%ld ms %d has taken a fork \n" , var->tnow,v);
-				pthread_mutex_lock(&var->forks[(v + 1)  % var->tab[0]]);
-				var->tnow = gettime(*var) - var->tstart;
-				printf("%ld ms %d has taken a fork \n" , var->tnow, v);
-				printf("%ld ms %d is eating \n" , var->tnow, v);
-				usleep(1000 * var->tab[2]);
-				time_to_die += var->tab[1];
-				//printf("TIME TO DIE FOR PHILOSOPHER NUMBER %d IS %d \n", v, time_to_die);
-				//printf("IS PHILOSOPHER %d DEAD? %d \n", v, var->is_philo_dead);
-				pthread_mutex_unlock(&var->forks[v % var->tab[0]]);
-				pthread_mutex_unlock(&var->forks[(v + 1) % var->tab[0]]);
-				var->tnow = gettime(*var) - var->tstart;
-				printf("%ld ms %d is sleeping \n" , var->tnow, v);
-				usleep(var->tab[3] * 1000);
-			}
-			else
-			{
-				pthread_mutex_lock(&var->death);
-				var->is_philo_dead = 1; 
-				pthread_mutex_unlock(&var->death);
-				var->tnow = gettime(*var) - var->tstart;
-				printf("%ld ms %d died \n", var->tnow, v);
-				break;
-			}
-		}
-		break;
+		pthread_mutex_lock(&philo->vars->forks[v % philo->vars->tab[0]]);
+		mutex_print(v, philo->vars, "has taken a fork");
+		pthread_mutex_lock(&philo->vars->forks[(v + 1)  % philo->vars->tab[0]]);
+		mutex_print(v, philo->vars, "has taken a fork");
+		mutex_print(v, philo->vars, "is eating");
+		pthread_mutex_lock(&philo->vars->death);
+		philo->time_to_die = gettimenow() + philo->vars->tab[1];
+		philo->eat_count--;
+		pthread_mutex_unlock(&philo->vars->death);
+		myusleep(philo->vars->tab[2]);
+		pthread_mutex_unlock(&philo->vars->forks[v % philo->vars->tab[0]]);
+		pthread_mutex_unlock(&philo->vars->forks[(v + 1) % philo->vars->tab[0]]);
+		mutex_print(v, philo->vars, "is sleeping");
+		myusleep(philo->vars->tab[3]);
+		mutex_print(v, philo->vars, "is thinking");
 	}
 	return NULL;
 }
 
-long	gettime(t_vars var)
+void	super_visor(t_philo *philos, t_vars *var)
 {
-	gettimeofday(&var.time, NULL);
-	return( (var.time.tv_sec * 1000) + (var.time.tv_usec / 1000));
+	int i = 0;
+	int meal_count = 0;
+	while(i < var->tab[0])
+	{
+		pthread_mutex_lock(&philos[i].vars->death);
+		if (philos[i].time_to_die < gettimenow())
+		{
+			// if(philos[i].eat_count == 0)
+			// 	meal_count++;
+			var->is_philo_dead = 1;
+			pthread_mutex_lock(&philos->vars->print);
+			printf("%ld %d died \n", gettimenow() - var->tstart, i);
+			break;
+		}
+		pthread_mutex_unlock(&philos[i].vars->death);
+		i++;
+		if (i == var->tab[0])
+			i = 0;
+	}
 }
 
-void	create_philo(t_vars var, pthread_t *thread)
+void	create_philo(t_vars *var, pthread_t *thread)
 {
-		var.i = 0;
-		while(var.i < var.tab[0])
+		t_philo *philos;
+		var->i = 0;
+		var->tstart = gettimenow();
+		philos = malloc(sizeof(t_philo) * var->tab[0]); 
+		while(var->i < var->tab[0])
 		{	
-			var.tstart = gettime(var);
-			var.result = pthread_create(&thread[var.i], NULL, (void *)thread_body, &var);
-			usleep(100);
-			var.i++;
-			if(var.result != 0)
-			{
-				printf("pthread_create failed.");
-				return ;
-			}
+			philos[var->i].i = var->i;
+			philos[var->i].vars = var;	
+			philos[var->i].eat_count = var->tab[4];
+			pthread_create(&thread[var->i], NULL, (void *)thread_body, &philos[var->i]);
+			usleep(50);
+			var->i++;
 		}
-		var.i = 0;
-		while(var.i < var.tab[0])
-		{
-			var.result = pthread_join(thread[var.i++], NULL);
-			if(var.result != 0)
-			{
-				printf("pthread_join failed.");
-				return ;
-			}
-		}	
+		var->i = 0;
+		super_visor(philos, var);
 }
 
 void	init_mystruct(t_vars *var, char **av, int ac)
 {
+	
 	var->i = 0;
-	while (var->i < ac-1)
+	while (var->i < ac - 1)
 	{
-		var->tab[var->i] = ft_atoi(av[var->i + 1]);
+		var->tab[var->i] = ft_atoi(av[var->i + 1]);	
 		var->i++;
 	}
-	var->tnow = 0;
 	var->is_philo_dead = 0;
 }
 
@@ -106,16 +128,15 @@ int	main(int ac, char **av)
 {
     if ((ac == 5 || ac == 6) && is_digit(av) == 1)
     {
-		t_vars	var;
-		
-		var.tab = malloc((ac) * sizeof(int));
-		init_mystruct(&var, av, ac);
-		if (var.tab[0] < 1)
+		t_vars	*var;
+		var = malloc(sizeof(t_vars) * 1);
+		var->tab = malloc((ac) * sizeof(int));
+		init_mystruct(var, av, ac);
+		if (var->tab[0] < 1)
 			return (0);
-		pthread_t thread[var.tab[0]];
-		var.forks = malloc(var.tab[0] * sizeof(int));
-		init_mutex(&var);
+		pthread_t thread[var->tab[0]];
+		var->forks = malloc(var->tab[0] * sizeof(int));
+		init_mutex(var);
 		create_philo(var, thread);
-		destroy_mutex(var);
 	}
 }

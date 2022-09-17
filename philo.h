@@ -6,7 +6,7 @@
 /*   By: iel-moha <iel-moha@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/08/16 00:26:56 by iel-moha          #+#    #+#             */
-/*   Updated: 2022/09/16 23:55:23 by iel-moha         ###   ########.fr       */
+/*   Updated: 2022/09/17 16:10:18 by iel-moha         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -25,22 +25,28 @@ typedef struct vars
     int 			i;
     int 			*tab;
     pthread_mutex_t *forks;
-    int 			result;
     long int    	tstart;
-    long int    	tnow;
-    struct timeval 	time;
     int				is_philo_dead;
 	pthread_mutex_t	death;
     pthread_mutex_t print;
 }   t_vars;
 
+typedef struct philo
+{
+	int	i;
+	long long time_to_die;
+	int	eat_count;
+	t_vars *vars;
+}   t_philo
+;
+
 int     ft_atoi(const char *str);
 int     is_digit(char **av);
 void    init_mutex(t_vars *var);
 void    init_mystruct(t_vars *var, char **av, int ac);
-void    create_philo(t_vars var, pthread_t *thread);
-void*	thread_body(t_vars *var);
-long	gettime(t_vars var);
-void	destroy_mutex(t_vars var);
+void	create_philo(t_vars *var, pthread_t *thread);
+void	*thread_body(t_philo *var);
+void	destroy_mutex(t_vars *var);
+void	mutex_print(int v, t_vars *var, char *text);
 
 #endif

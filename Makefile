@@ -1,7 +1,7 @@
-CC = gcc -lpthread
+CC = gcc -Werror -Wextra -Wall -lpthread 
 NAME = philo
 
-SRC = philo.c utilities.c
+SRC = philo.c utilities.c 
 OBJSRC = $(SRC)
 
 all : $(NAME)

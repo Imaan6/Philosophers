@@ -6,7 +6,7 @@
 /*   By: iel-moha <iel-moha@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/08/16 01:31:38 by iel-moha          #+#    #+#             */
-/*   Updated: 2022/09/16 23:56:46 by iel-moha         ###   ########.fr       */
+/*   Updated: 2022/09/17 15:33:18 by iel-moha         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -73,41 +73,24 @@ int	is_digit(char **av)
 void	init_mutex(t_vars *var)
 {
 	var->i = 0;
+	var->forks = malloc(sizeof(pthread_mutex_t) * var->tab[0]);
 	while(var->i < var->tab[0])
 	{
-		var->result = pthread_mutex_init(&var->forks[var->i], NULL);
+	pthread_mutex_init(&var->forks[var->i], NULL);
 		var->i++;
-		if (var->result != 0)
-		{
-			printf("pthread_mutex_init failed.");
-			return ;
-		}
 	}
-	var->result = pthread_mutex_init(&var->death, NULL);
-	if (var->result != 0)
-	{
-		printf("pthread_mutex_init failed.");
-		return ;
-	}
-	var->result = pthread_mutex_init(&var->print, NULL);
-	if (var->result != 0)
-	{
-		printf("pthread_mutex_init failed.");
-		return ;
-	}
+	pthread_mutex_init(&var->death, NULL);
+
+	pthread_mutex_init(&var->print, NULL);
+
 }
 
-void	destroy_mutex(t_vars var)
+void	destroy_mutex(t_vars *var)
 {
-	var.i = 0;
-	while(var.i < var.tab[0])
+	var->i = 0;
+	while(var->i < var->tab[0])
 	{
-		var.result = pthread_mutex_destroy(&var.forks[var.i]);
-		var.i++;
-		if (var.result != 0)
-		{
-			printf("pthread_mutex_destroy failed.");
-			return ;
-		}
+		pthread_mutex_destroy(&var->forks[var->i]);
+		var->i++;
 	}	
 }
