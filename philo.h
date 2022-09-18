@@ -6,7 +6,7 @@
 /*   By: iel-moha <iel-moha@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/08/16 00:26:56 by iel-moha          #+#    #+#             */
-/*   Updated: 2022/09/17 16:10:18 by iel-moha         ###   ########.fr       */
+/*   Updated: 2022/09/18 21:30:09 by iel-moha         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -33,6 +33,7 @@ typedef struct vars
 
 typedef struct philo
 {
+    int finished;
 	int	i;
 	long long time_to_die;
 	int	eat_count;

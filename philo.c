@@ -6,7 +6,7 @@
 /*   By: iel-moha <iel-moha@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/08/16 00:26:44 by iel-moha          #+#    #+#             */
-/*   Updated: 2022/09/17 17:11:42 by iel-moha         ###   ########.fr       */
+/*   Updated: 2022/09/18 21:37:40 by iel-moha         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -32,7 +32,6 @@ void myusleep(long long time_to_waste)
 
 void	mutex_print(int v, t_vars *var, char *text)
 {
-	
 	pthread_mutex_lock(&var->print);
 	if(var->is_philo_dead != 1)
 		printf("%ld %d %s \n", gettimenow() - var->tstart, v, text);
@@ -58,7 +57,11 @@ void	*thread_body(t_philo *philo)
 		mutex_print(v, philo->vars, "is eating");
 		pthread_mutex_lock(&philo->vars->death);
 		philo->time_to_die = gettimenow() + philo->vars->tab[1];
-		philo->eat_count--;
+		if(philo->vars->tab[4])
+		{
+			philo->eat_count--;
+			printf("eat count : %d \n", philo->eat_count);
+		}
 		pthread_mutex_unlock(&philo->vars->death);
 		myusleep(philo->vars->tab[2]);
 		pthread_mutex_unlock(&philo->vars->forks[v % philo->vars->tab[0]]);
@@ -73,14 +76,27 @@ void	*thread_body(t_philo *philo)
 void	super_visor(t_philo *philos, t_vars *var)
 {
 	int i = 0;
-	//int meal_count = 0;
+	int meal_count = 0;
 	while(i < var->tab[0])
 	{
+		if(var->tab[4])
+		{
+			if(philos[i].eat_count == 0 && meal_count == var->tab[0])
+			{
+				break;
+				//printf(" first meal count: %d \n", meal_count);	
+			}
+			else if ((philos[i].finished == 0)&& philos[i].eat_count == 0 && meal_count != var->tab[0])
+			{
+				philos[i].finished = 1;
+				meal_count++;
+			}
+				
+			//printf(" second meal count: %d and eat count : %d \n", meal_count, philos->eat_count);	
+		}
 		pthread_mutex_lock(&philos[i].vars->death);
 		if (philos[i].time_to_die < gettimenow())
 		{
-			// if(philos[i].eat_count == 0)
-			// 	meal_count++;
 			var->is_philo_dead = 1;
 			pthread_mutex_lock(&philos->vars->print);
 			printf("%ld %d died \n", gettimenow() - var->tstart, i);
@@ -101,9 +117,11 @@ void	create_philo(t_vars *var, pthread_t *thread)
 		philos = malloc(sizeof(t_philo) * var->tab[0]); 
 		while(var->i < var->tab[0])
 		{	
+			philos[var->i].finished = 0;
 			philos[var->i].i = var->i;
-			philos[var->i].vars = var;	
-			philos[var->i].eat_count = var->tab[4];
+			philos[var->i].vars = var;
+			if(var->tab[4])
+				philos[var->i].eat_count = var->tab[4];
 			pthread_create(&thread[var->i], NULL, (void *)thread_body, &philos[var->i]);
 			usleep(50);
 			var->i++;
@@ -114,7 +132,6 @@ void	create_philo(t_vars *var, pthread_t *thread)
 
 void	init_mystruct(t_vars *var, char **av, int ac)
 {
-	
 	var->i = 0;
 	while (var->i < ac - 1)
 	{
