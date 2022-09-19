@@ -6,7 +6,7 @@
 /*   By: iel-moha <iel-moha@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/08/16 00:26:44 by iel-moha          #+#    #+#             */
-/*   Updated: 2022/09/18 21:37:40 by iel-moha         ###   ########.fr       */
+/*   Updated: 2022/09/19 20:18:14 by iel-moha         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -34,7 +34,7 @@ void	mutex_print(int v, t_vars *var, char *text)
 {
 	pthread_mutex_lock(&var->print);
 	if(var->is_philo_dead != 1)
-		printf("%ld %d %s \n", gettimenow() - var->tstart, v, text);
+		printf("%ld %d %s \n", gettimenow() - var->tstart, v + 1, text);
 	pthread_mutex_unlock(&var->print);
 }
 
@@ -43,13 +43,14 @@ void	*thread_body(t_philo *philo)
 	int	v;
 	
 	philo->time_to_die = philo->vars->tab[1] + gettimenow();
-	// printf("time to day : %lu")
 	pthread_mutex_lock(&philo->vars->death);
 	philo->time_to_die = philo->vars->tab[1] + gettimenow();
 	pthread_mutex_unlock(&philo->vars->death);
 	v = philo->i;
 	while (1)
 	{
+		if(philo->vars->tab[4] && philo->eat_count == 0)
+			continue;
 		pthread_mutex_lock(&philo->vars->forks[v % philo->vars->tab[0]]);
 		mutex_print(v, philo->vars, "has taken a fork");
 		pthread_mutex_lock(&philo->vars->forks[(v + 1)  % philo->vars->tab[0]]);
@@ -79,6 +80,7 @@ void	super_visor(t_philo *philos, t_vars *var)
 	int meal_count = 0;
 	while(i < var->tab[0])
 	{
+		pthread_mutex_lock(&philos[i].vars->death);
 		if(var->tab[4])
 		{
 			if(philos[i].eat_count == 0 && meal_count == var->tab[0])
@@ -94,12 +96,11 @@ void	super_visor(t_philo *philos, t_vars *var)
 				
 			//printf(" second meal count: %d and eat count : %d \n", meal_count, philos->eat_count);	
 		}
-		pthread_mutex_lock(&philos[i].vars->death);
 		if (philos[i].time_to_die < gettimenow())
 		{
 			var->is_philo_dead = 1;
 			pthread_mutex_lock(&philos->vars->print);
-			printf("%ld %d died \n", gettimenow() - var->tstart, i);
+			printf("%ld %d died \n", gettimenow() - var->tstart, i + 1);
 			break;
 		}
 		pthread_mutex_unlock(&philos[i].vars->death);
@@ -128,6 +129,11 @@ void	create_philo(t_vars *var, pthread_t *thread)
 		}
 		var->i = 0;
 		super_visor(philos, var);
+		while(var->i < var->tab[0])
+		{
+			pthread_detach(thread[var->i]);
+			var->i++;
+		}
 }
 
 void	init_mystruct(t_vars *var, char **av, int ac)
