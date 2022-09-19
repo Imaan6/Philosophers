@@ -6,7 +6,7 @@
 /*   By: iel-moha <iel-moha@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/08/16 00:26:44 by iel-moha          #+#    #+#             */
-/*   Updated: 2022/09/19 20:44:20 by iel-moha         ###   ########.fr       */
+/*   Updated: 2022/09/19 21:00:34 by iel-moha         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -63,10 +63,7 @@ void	*thread_body(t_philo *philo)
 		pthread_mutex_lock(&philo->vars->death);
 		philo->time_to_die = gettimenow() + philo->vars->tab[1];
 		if(philo->vars->tab[4])
-		{
 			philo->eat_count--;
-			printf("eat count : %d \n", philo->eat_count);
-		}
 		pthread_mutex_unlock(&philo->vars->death);
 		myusleep(philo->vars->tab[2]);
 		pthread_mutex_unlock(&philo->vars->forks[v % philo->vars->tab[0]]);
