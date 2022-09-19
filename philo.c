@@ -6,7 +6,7 @@
 /*   By: iel-moha <iel-moha@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/08/16 00:26:44 by iel-moha          #+#    #+#             */
-/*   Updated: 2022/09/19 20:18:14 by iel-moha         ###   ########.fr       */
+/*   Updated: 2022/09/19 20:44:20 by iel-moha         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -32,9 +32,13 @@ void myusleep(long long time_to_waste)
 
 void	mutex_print(int v, t_vars *var, char *text)
 {
-	pthread_mutex_lock(&var->print);
+	pthread_mutex_lock(&var->is_ded);
 	if(var->is_philo_dead != 1)
+	{
+		pthread_mutex_lock(&var->print);
 		printf("%ld %d %s \n", gettimenow() - var->tstart, v + 1, text);
+	}
+	pthread_mutex_unlock(&var->is_ded);
 	pthread_mutex_unlock(&var->print);
 }
 
@@ -42,7 +46,7 @@ void	*thread_body(t_philo *philo)
 {	
 	int	v;
 	
-	philo->time_to_die = philo->vars->tab[1] + gettimenow();
+	// philo->time_to_die = philo->vars->tab[1] + gettimenow();
 	pthread_mutex_lock(&philo->vars->death);
 	philo->time_to_die = philo->vars->tab[1] + gettimenow();
 	pthread_mutex_unlock(&philo->vars->death);
@@ -84,21 +88,18 @@ void	super_visor(t_philo *philos, t_vars *var)
 		if(var->tab[4])
 		{
 			if(philos[i].eat_count == 0 && meal_count == var->tab[0])
-			{
 				break;
-				//printf(" first meal count: %d \n", meal_count);	
-			}
 			else if ((philos[i].finished == 0)&& philos[i].eat_count == 0 && meal_count != var->tab[0])
 			{
 				philos[i].finished = 1;
 				meal_count++;
 			}
-				
-			//printf(" second meal count: %d and eat count : %d \n", meal_count, philos->eat_count);	
 		}
 		if (philos[i].time_to_die < gettimenow())
 		{
+			pthread_mutex_lock(&philos->vars->is_ded);
 			var->is_philo_dead = 1;
+			pthread_mutex_unlock(&philos->vars->is_ded);
 			pthread_mutex_lock(&philos->vars->print);
 			printf("%ld %d died \n", gettimenow() - var->tstart, i + 1);
 			break;
@@ -161,5 +162,6 @@ int	main(int ac, char **av)
 		var->forks = malloc(var->tab[0] * sizeof(int));
 		init_mutex(var);
 		create_philo(var, thread);
+		destroy_mutex(var);
 	}
 }
