@@ -6,7 +6,7 @@
 /*   By: iel-moha <iel-moha@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/08/16 01:31:38 by iel-moha          #+#    #+#             */
-/*   Updated: 2022/09/19 20:40:13 by iel-moha         ###   ########.fr       */
+/*   Updated: 2022/09/21 13:45:48 by iel-moha         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -70,28 +70,31 @@ int	is_digit(char **av)
 	return (1);
 }
 
-void	init_mutex(t_vars *var)
-{
-	var->i = 0;
-	var->forks = malloc(sizeof(pthread_mutex_t) * var->tab[0]);
-	while(var->i < var->tab[0])
-	{
-	pthread_mutex_init(&var->forks[var->i], NULL);
-		var->i++;
-	}
-	pthread_mutex_init(&var->death, NULL);
-	pthread_mutex_init(&var->print, NULL);
-	pthread_mutex_init(&var->is_ded, NULL);
-}
-
 void	destroy_mutex(t_vars *var)
 {
 	var->i = 0;
-	while(var->i < var->tab[0])
+	while (var->i < var->tab[0])
 	{
 		pthread_mutex_destroy(&var->forks[var->i]);
 		var->i++;
 	}
 	pthread_mutex_destroy(&var->death);
 	pthread_mutex_destroy(&var->print);
+}
+
+long	gettimenow(void)
+{
+	struct timeval	t;
+
+	gettimeofday(&t, NULL);
+	return ((t.tv_sec * 1000) + (t.tv_usec / 1000));
+}
+
+void	myusleep(long long time_to_waste)
+{	
+	long long	time_finish;
+
+	time_finish = gettimenow() + time_to_waste;
+	while (gettimenow() < time_finish)
+		usleep(10);
 }
