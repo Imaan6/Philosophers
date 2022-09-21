@@ -6,7 +6,7 @@
 /*   By: iel-moha <iel-moha@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/09/21 13:04:57 by iel-moha          #+#    #+#             */
-/*   Updated: 2022/09/21 13:22:19 by iel-moha         ###   ########.fr       */
+/*   Updated: 2022/09/21 16:08:19 by iel-moha         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -70,6 +70,7 @@ void	super_visor(t_philo *philos, t_vars *var, int i, int meal_count)
 		i++;
 		if (i == var->tab[0])
 			i = 0;
+		usleep(50);
 	}
 }
 
@@ -79,7 +80,7 @@ void	grim_reaper(t_philo *philos, t_vars *var, int i)
 	var->is_philo_dead = 1;
 	pthread_mutex_unlock(&philos->vars->is_ded);
 	pthread_mutex_lock(&philos->vars->print);
-	printf("%ld %d died \n", gettimenow() - var->tstart, i + 1);
+	printf("%lld %d died \n", gettimenow() - var->tstart, i + 1);
 }
 
 void	create_philo(t_vars *var)
@@ -87,7 +88,7 @@ void	create_philo(t_vars *var)
 	int			i;
 	int			meal_count;
 	t_philo		*philos;
-
+	
 	i = 0;
 	meal_count = 0;
 	var->i = 0;
@@ -103,9 +104,21 @@ void	create_philo(t_vars *var)
 			philos[var->i].eat_count = var->tab[4];
 		pthread_create(&philos->thread[var->i], NULL,
 			(void *)thread_body, &philos[var->i]);
-		usleep(50);
-		var->i++;
+		var->i+=2;
 	}
-	var->i = 0;
+	usleep(50);
+	var->i = 1;
+	while (var->i < var->tab[0])
+	{	
+		philos[var->i].finished = 0;
+		philos[var->i].i = var->i;
+		philos[var->i].vars = var;
+		if (var->tab[4])
+			philos[var->i].eat_count = var->tab[4];
+		pthread_create(&philos->thread[var->i], NULL,
+			(void *)thread_body, &philos[var->i]);
+		var->i+=2;
+	}
+	var->i=0;
 	super_visor(philos, var, i, meal_count);
 }

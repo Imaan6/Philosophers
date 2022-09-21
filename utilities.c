@@ -6,7 +6,7 @@
 /*   By: iel-moha <iel-moha@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/08/16 01:31:38 by iel-moha          #+#    #+#             */
-/*   Updated: 2022/09/21 13:45:48 by iel-moha         ###   ########.fr       */
+/*   Updated: 2022/09/21 16:14:37 by iel-moha         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -80,9 +80,10 @@ void	destroy_mutex(t_vars *var)
 	}
 	pthread_mutex_destroy(&var->death);
 	pthread_mutex_destroy(&var->print);
+	pthread_mutex_destroy(&var->is_ded);
 }
 
-long	gettimenow(void)
+long long	gettimenow(void)
 {
 	struct timeval	t;
 
@@ -96,5 +97,5 @@ void	myusleep(long long time_to_waste)
 
 	time_finish = gettimenow() + time_to_waste;
 	while (gettimenow() < time_finish)
-		usleep(10);
+		usleep(100);
 }

@@ -6,7 +6,7 @@
 /*   By: iel-moha <iel-moha@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/08/16 00:26:44 by iel-moha          #+#    #+#             */
-/*   Updated: 2022/09/21 13:45:55 by iel-moha         ###   ########.fr       */
+/*   Updated: 2022/09/21 16:02:59 by iel-moha         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,10 +18,11 @@ void	mutex_print(int v, t_vars *var, char *text)
 	if (var->is_philo_dead != 1)
 	{
 		pthread_mutex_lock(&var->print);
-		printf("%ld %d %s \n", gettimenow() - var->tstart, v + 1, text);
+		printf("%lld %d %s \n", gettimenow() - var->tstart, v + 1, text);
+		pthread_mutex_unlock(&var->print);
 	}
 	pthread_mutex_unlock(&var->is_ded);
-	pthread_mutex_unlock(&var->print);
+	
 }
 
 void	init_mutex(t_vars *var)

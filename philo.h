@@ -6,7 +6,7 @@
 /*   By: iel-moha <iel-moha@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/08/16 00:26:56 by iel-moha          #+#    #+#             */
-/*   Updated: 2022/09/21 13:54:47 by iel-moha         ###   ########.fr       */
+/*   Updated: 2022/09/21 16:02:36 by iel-moha         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -51,7 +51,7 @@ void	*thread_body(t_philo *var);
 void	destroy_mutex(t_vars *var);
 void	mutex_print(int v, t_vars *var, char *text);
 void	body_continued(t_philo *philo, int v);
-long	gettimenow(void);
+long long	gettimenow(void);
 void	myusleep(long long time_to_waste);
 void	super_visor(t_philo *philos, t_vars *var, int i, int meal_count);
 void	grim_reaper(t_philo *philos, t_vars *var, int i);
