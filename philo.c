@@ -6,7 +6,7 @@
 /*   By: iel-moha <iel-moha@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/08/16 00:26:44 by iel-moha          #+#    #+#             */
-/*   Updated: 2022/09/21 16:02:59 by iel-moha         ###   ########.fr       */
+/*   Updated: 2022/09/22 17:19:52 by iel-moha         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -34,7 +34,6 @@ void	init_mutex(t_vars *var)
 		pthread_mutex_init(&var->forks[var->i], NULL);
 		var->i++;
 	}
-	pthread_mutex_init(&var->death, NULL);
 	pthread_mutex_init(&var->print, NULL);
 	pthread_mutex_init(&var->is_ded, NULL);
 }
@@ -64,6 +63,6 @@ int	main(int ac, char **av)
 		var->forks = malloc(var->tab[0] * sizeof(int));
 		init_mutex(var);
 		create_philo(var);
-		destroy_mutex(var);
+		// destroy_mutex(var);
 	}
 }

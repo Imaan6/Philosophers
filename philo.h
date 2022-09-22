@@ -6,7 +6,7 @@
 /*   By: iel-moha <iel-moha@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/08/16 00:26:56 by iel-moha          #+#    #+#             */
-/*   Updated: 2022/09/21 16:02:36 by iel-moha         ###   ########.fr       */
+/*   Updated: 2022/09/22 16:46:16 by iel-moha         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -27,7 +27,6 @@ typedef struct vars
 	pthread_mutex_t	*forks;
 	long int		tstart;
 	int				is_philo_dead;
-	pthread_mutex_t	death;
 	pthread_mutex_t	print;
 	pthread_mutex_t	is_ded;
 }	t_vars;
@@ -38,6 +37,7 @@ typedef struct philo
 	int			i;
 	long long	time_to_die;
 	int			eat_count;
+	pthread_mutex_t	death;
 	t_vars		*vars;
 	pthread_t	*thread;
 }	t_philo;
