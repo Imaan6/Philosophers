@@ -1,4 +1,4 @@
-CC = gcc -Werror -Wextra -Wall -lpthread
+CC = gcc -Werror -Wextra -Wall -lpthread #-fsanitize=thread -g
 NAME = philo
 
 SRC = philo.c utilities.c cycle_of_a_life.c

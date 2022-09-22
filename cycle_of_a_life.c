@@ -6,7 +6,7 @@
 /*   By: iel-moha <iel-moha@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/09/21 13:04:57 by iel-moha          #+#    #+#             */
-/*   Updated: 2022/09/22 17:08:30 by iel-moha         ###   ########.fr       */
+/*   Updated: 2022/09/22 18:20:09 by iel-moha         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -85,17 +85,14 @@ void	grim_reaper(t_philo *philos, t_vars *var, int i)
 
 void	create_philo(t_vars *var)
 {
-	int			i;
 	int			meal_count;
 	t_philo		*philos;
-	
-	i = 0;
+
 	meal_count = 0;
 	var->i = 0;
 	var->tstart = gettimenow();
 	philos = malloc(sizeof(t_philo) * var->tab[0]);
 	philos->thread = malloc(sizeof(pthread_t) * var->tab[0]);
-	
 	while (var->i < var->tab[0])
 	{	
 		pthread_mutex_init(&philos->death, NULL);
@@ -106,23 +103,9 @@ void	create_philo(t_vars *var)
 			philos[var->i].eat_count = var->tab[4];
 		var->i++;
 	}
-	var->i = 0;
-	while (var->i < var->tab[0])
-	{	
-		pthread_create(&philos->thread[var->i], NULL,
-			(void *)thread_body, &philos[var->i]);
-		pthread_detach(philos->thread[var->i]);	
-		var->i+=2;
-	}
+	let_there_be_light(var, philos, 0);
 	usleep(var->tab[0] * 25);
-	var->i = 1;
-	while (var->i < var->tab[0])
-	{	
-		pthread_create(&philos->thread[var->i], NULL,
-			(void *)thread_body, &philos[var->i]);
-		pthread_detach(philos->thread[var->i]);
-		var->i+=2;
-	}
-	var->i=0;
-	super_visor(philos, var, i, meal_count);
+	let_there_be_light(var, philos, 1);
+	var->i = 0;
+	super_visor(philos, var, var->i, meal_count);
 }

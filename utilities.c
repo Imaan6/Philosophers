@@ -6,7 +6,7 @@
 /*   By: iel-moha <iel-moha@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/08/16 01:31:38 by iel-moha          #+#    #+#             */
-/*   Updated: 2022/09/22 17:18:57 by iel-moha         ###   ########.fr       */
+/*   Updated: 2022/09/22 18:21:01 by iel-moha         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -89,12 +89,12 @@ long long	gettimenow(void)
 	return ((t.tv_sec * 1000) + (t.tv_usec / 1000));
 }
 
-void	myusleep(long long time_to_waste)//
+void	myusleep(long long time_to_waste)
 {	
 	long long	time_finish;
 
 	time_finish = gettimenow() + time_to_waste;
-	usleep(time_to_waste * 900); // 0.9 * 1000;
+	usleep(time_to_waste * 0.9 * 1000);
 	while (gettimenow() < time_finish)
 		usleep(50);
 }
