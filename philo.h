@@ -6,7 +6,7 @@
 /*   By: iel-moha <iel-moha@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/08/16 00:26:56 by iel-moha          #+#    #+#             */
-/*   Updated: 2022/09/24 14:22:47 by iel-moha         ###   ########.fr       */
+/*   Updated: 2022/09/24 15:39:39 by iel-moha         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -46,7 +46,7 @@ typedef struct philo
 int			ft_atoi(const char *str);
 int			is_digit(char **av);
 void		init_mutex(t_vars *var);
-void		init_mystruct(t_vars *var, char **av, int ac);
+void		init_mystruct(t_vars *var);
 void		create_philo(t_vars *var);
 void		*thread_body(t_philo *var);
 void		destroy_mutex(t_vars *var);
@@ -61,5 +61,6 @@ void		error_handling(int i, char *s);
 void		body(t_philo *philo);
 int			error_malloc(void);
 void		creation(t_philo *philos, t_vars *var, int meal_count);
+int			args_atoi(t_vars *var, char **av, int ac);
 
 #endif
