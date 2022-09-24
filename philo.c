@@ -6,20 +6,20 @@
 /*   By: iel-moha <iel-moha@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/08/16 00:26:44 by iel-moha          #+#    #+#             */
-/*   Updated: 2022/09/22 18:49:16 by iel-moha         ###   ########.fr       */
+/*   Updated: 2022/09/24 11:51:14 by iel-moha         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "philo.h"
 
-void	error_handling(char *s, int i)
-{
-	if(pthread_mutex_init(&var->forks[var->i], NULL) != 0)
-	{
-		printf("Mutex init failed \n");
-		return ;
-	}
-}
+// void	error_handling(char *s, int i)
+// {
+// 	if(pthread_mutex_init(&var->forks[var->i], NULL) != 0)
+// 	{
+// 		printf("Mutex init failed \n");
+// 		return ;
+// 	}
+// }
 
 void	mutex_print(int v, t_vars *var, char *text)
 {
@@ -79,9 +79,16 @@ int	main(int ac, char **av)
 		var = malloc(sizeof(t_vars) * 1);
 		var->tab = malloc((ac) * sizeof(int));
 		init_mystruct(var, av, ac);
-		if (var->tab[0] < 1 || var->tab[4] == 0)
+		if(ac == 6  && var->tab[4] < 1 )
 		{
-			printf("Arguments are not valid. Try Again. \n");
+				printf("Arguments are not valid. Try Again. 1 \n");
+				return (0);
+		}
+		if (var->tab[0] < 1 || var->tab[1] > 2147483647
+			|| var->tab[2] > 2147483647 || var->tab[3] > 2147483647
+			|| var->tab[4] > 2147483647)
+		{
+			printf("Arguments are not valid. Try Again. 2\n");
 			return (0);
 		}
 		var->forks = malloc(var->tab[0] * sizeof(int));
@@ -89,5 +96,5 @@ int	main(int ac, char **av)
 		create_philo(var);
 	}
 	else
-		printf("Arguments are not valid. Try Again. \n");
+		printf("Arguments are not valid. Try Again. 3 \n");
 }

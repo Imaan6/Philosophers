@@ -6,7 +6,7 @@
 /*   By: iel-moha <iel-moha@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/09/21 13:04:57 by iel-moha          #+#    #+#             */
-/*   Updated: 2022/09/22 18:20:09 by iel-moha         ###   ########.fr       */
+/*   Updated: 2022/09/24 11:31:07 by iel-moha         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -95,7 +95,7 @@ void	create_philo(t_vars *var)
 	philos->thread = malloc(sizeof(pthread_t) * var->tab[0]);
 	while (var->i < var->tab[0])
 	{	
-		pthread_mutex_init(&philos->death, NULL);
+		pthread_mutex_init(&philos[var->i].death, NULL);
 		philos[var->i].finished = 0;
 		philos[var->i].i = var->i;
 		philos[var->i].vars = var;
