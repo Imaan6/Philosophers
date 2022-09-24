@@ -6,7 +6,7 @@
 /*   By: iel-moha <iel-moha@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/08/16 00:26:44 by iel-moha          #+#    #+#             */
-/*   Updated: 2022/09/24 16:34:26 by iel-moha         ###   ########.fr       */
+/*   Updated: 2022/09/24 18:32:01 by iel-moha         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -58,30 +58,13 @@ void	init_mystruct(t_vars *var)
 	var->i = 0;
 	var->tstart = gettimenow();
 	var->im = 2147483647;
-	var->forks = malloc(var->tab[0] * sizeof(int));
 	if (var->forks == NULL)
 		error_malloc();
-}
-
-int	args_atoi(t_vars *var, char **av, int ac)
-{
-	var->i = 0;
-	while (var->i < ac - 1)
-	{
-		var->tab[var->i] = ft_atoi(av[var->i + 1]);
-		if(ft_atoi(av[var->i + 1]) == 0)
-			return (0);
-		var->i++;
-	}
-	return (1);
 }
 
 int	main(int ac, char **av)
 {
 	t_vars	*var;
-
-	int result;
-	result = 1;
 
 	if ((ac == 5 || ac == 6) && is_digit(av) == 1)
 	{
@@ -89,14 +72,10 @@ int	main(int ac, char **av)
 		var->tab = malloc((ac) * sizeof(int));
 		if (var == NULL || var->tab == NULL)
 			error_malloc();
-		result = args_atoi(var, av, ac);
+		var->result = 1;
+		var->result = args_atoi(var, av, ac);
 		init_mystruct(var);
-		if (ac == 6 && var->tab[4] < 1)
-		{
-			printf("Arguments are not valid. Try Again. 1 \n");
-			return (0);
-		}
-		if (var->tab[0] < 1 || result == 0)
+		if (var->tab[0] < 1 || var->result == 0 || (ac == 6 && var->tab[4] < 1))
 		{
 			printf("Arguments are not valid. Try Again. 2\n");
 			return (0);

@@ -6,7 +6,7 @@
 /*   By: iel-moha <iel-moha@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/08/16 00:26:56 by iel-moha          #+#    #+#             */
-/*   Updated: 2022/09/24 15:39:39 by iel-moha         ###   ########.fr       */
+/*   Updated: 2022/09/24 17:36:29 by iel-moha         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -30,6 +30,7 @@ typedef struct vars
 	int				im;
 	pthread_mutex_t	print;
 	pthread_mutex_t	is_ded;
+	int				result;
 }	t_vars;
 
 typedef struct philo
@@ -62,5 +63,6 @@ void		body(t_philo *philo);
 int			error_malloc(void);
 void		creation(t_philo *philos, t_vars *var, int meal_count);
 int			args_atoi(t_vars *var, char **av, int ac);
+int			atoi_error(unsigned long r, int o);
 
 #endif
