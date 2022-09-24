@@ -6,7 +6,7 @@
 /*   By: iel-moha <iel-moha@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/09/21 13:04:57 by iel-moha          #+#    #+#             */
-/*   Updated: 2022/09/24 11:31:07 by iel-moha         ###   ########.fr       */
+/*   Updated: 2022/09/24 14:22:39 by iel-moha         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,9 +16,9 @@ void	*thread_body(t_philo *philo)
 {	
 	int	v;
 
-	pthread_mutex_lock(&philo->death);
+	error_handling(pthread_mutex_lock(&philo->death), "mutex");
 	philo->time_to_die = philo->vars->tab[1] + gettimenow();
-	pthread_mutex_unlock(&philo->death);
+	error_handling(pthread_mutex_unlock(&philo->death), "mutex");
 	v = philo->i;
 	while (1)
 		body_continued(philo, v);
@@ -27,19 +27,23 @@ void	*thread_body(t_philo *philo)
 
 void	body_continued(t_philo *philo, int v)
 {
-	pthread_mutex_lock(&philo->vars->forks[v % philo->vars->tab[0]]);
+	error_handling(pthread_mutex_lock(&philo->vars->forks
+		[v % philo->vars->tab[0]]), "Mutex");
 	mutex_print(v, philo->vars, "has taken a fork");
-	pthread_mutex_lock(&philo->vars->forks[(v + 1) % philo->vars->tab[0]]);
+	error_handling(pthread_mutex_lock(&philo->vars->forks
+		[(v + 1) % philo->vars->tab[0]]), "Mutex");
 	mutex_print(v, philo->vars, "has taken a fork");
 	mutex_print(v, philo->vars, "is eating");
-	pthread_mutex_lock(&philo->death);
+	error_handling(pthread_mutex_lock(&philo->death), "Mutex");
 	philo->time_to_die = gettimenow() + philo->vars->tab[1];
 	if (philo->vars->tab[4])
 		philo->eat_count--;
-	pthread_mutex_unlock(&philo->death);
+	error_handling(pthread_mutex_unlock(&philo->death), "Mutex");
 	myusleep(philo->vars->tab[2]);
-	pthread_mutex_unlock(&philo->vars->forks[(v + 1) % philo->vars->tab[0]]);
-	pthread_mutex_unlock(&philo->vars->forks[v % philo->vars->tab[0]]);
+	error_handling(pthread_mutex_unlock(&philo->vars->forks
+		[(v + 1) % philo->vars->tab[0]]), "Mutex");
+	error_handling(pthread_mutex_unlock(&philo->vars->forks
+		[v % philo->vars->tab[0]]), "Mutex");
 	mutex_print(v, philo->vars, "is sleeping");
 	myusleep(philo->vars->tab[3]);
 	mutex_print(v, philo->vars, "is thinking");
@@ -49,7 +53,7 @@ void	super_visor(t_philo *philos, t_vars *var, int i, int meal_count)
 {
 	while (i < var->tab[0])
 	{
-		pthread_mutex_lock(&philos[i].death);
+		error_handling(pthread_mutex_lock(&philos[i].death), "mutex");
 		if (var->tab[4])
 		{
 			if (philos[i].eat_count == 0 && meal_count == var->tab[0])
@@ -66,20 +70,20 @@ void	super_visor(t_philo *philos, t_vars *var, int i, int meal_count)
 			grim_reaper(philos, var, i);
 			break ;
 		}
-		pthread_mutex_unlock(&philos[i].death);
+		error_handling(pthread_mutex_unlock(&philos[i].death), "Mutex");
 		i++;
 		if (i == var->tab[0])
 			i = 0;
-		usleep(50);
+		error_handling(usleep(50), "usleep");
 	}
 }
 
 void	grim_reaper(t_philo *philos, t_vars *var, int i)
 {
-	pthread_mutex_lock(&philos->vars->is_ded);
+	error_handling(pthread_mutex_lock(&philos->vars->is_ded), "mutex");
 	var->is_philo_dead = 1;
-	pthread_mutex_unlock(&philos->vars->is_ded);
-	pthread_mutex_lock(&philos->vars->print);
+	error_handling(pthread_mutex_unlock(&philos->vars->is_ded), "mutex");
+	error_handling(pthread_mutex_lock(&philos->vars->print), "mutex");
 	printf("%lld %d died \n", gettimenow() - var->tstart, i + 1);
 }
 
@@ -93,9 +97,12 @@ void	create_philo(t_vars *var)
 	var->tstart = gettimenow();
 	philos = malloc(sizeof(t_philo) * var->tab[0]);
 	philos->thread = malloc(sizeof(pthread_t) * var->tab[0]);
+	if (philos == NULL || philos->thread == NULL)
+		error_malloc();
 	while (var->i < var->tab[0])
 	{	
-		pthread_mutex_init(&philos[var->i].death, NULL);
+		error_handling(pthread_mutex_init(&philos[var->i].death,
+				NULL), "mutex");
 		philos[var->i].finished = 0;
 		philos[var->i].i = var->i;
 		philos[var->i].vars = var;
@@ -103,9 +110,5 @@ void	create_philo(t_vars *var)
 			philos[var->i].eat_count = var->tab[4];
 		var->i++;
 	}
-	let_there_be_light(var, philos, 0);
-	usleep(var->tab[0] * 25);
-	let_there_be_light(var, philos, 1);
-	var->i = 0;
-	super_visor(philos, var, var->i, meal_count);
+	creation(philos, var, meal_count);
 }

@@ -6,7 +6,7 @@
 /*   By: iel-moha <iel-moha@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/08/16 00:26:56 by iel-moha          #+#    #+#             */
-/*   Updated: 2022/09/22 18:20:35 by iel-moha         ###   ########.fr       */
+/*   Updated: 2022/09/24 14:22:47 by iel-moha         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -27,6 +27,7 @@ typedef struct vars
 	pthread_mutex_t	*forks;
 	long int		tstart;
 	int				is_philo_dead;
+	int				im;
 	pthread_mutex_t	print;
 	pthread_mutex_t	is_ded;
 }	t_vars;
@@ -56,5 +57,9 @@ void		myusleep(long long time_to_waste);
 void		super_visor(t_philo *philos, t_vars *var, int i, int meal_count);
 void		grim_reaper(t_philo *philos, t_vars *var, int i);
 void		let_there_be_light(t_vars *var, t_philo *philos, int i);
+void		error_handling(int i, char *s);
+void		body(t_philo *philo);
+int			error_malloc(void);
+void		creation(t_philo *philos, t_vars *var, int meal_count);
 
 #endif
